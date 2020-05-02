@@ -13,9 +13,28 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import path 
+from django.views.generic import TemplateView, RedirectView
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    path('', RedirectView.as_view(
+        #url='/instagram/'), 
+        pattern_name='instagram:post_list'), name='root'),
+    path('admin/', admin.site.urls),
+    path('k-instagram/', include('instagram.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('blog1/', include('blog1.urls')),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
